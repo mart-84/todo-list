@@ -4,30 +4,62 @@ import json
 import win32api
 from categorie import *
 
+
+# Path of the Json file where data is saved
 path = "C:\\Users\\marti\\source\\repos\\Todo_List\\Todo_List\\data.json"
+# Path of the repertory where toPrint file is saved
 pathPrint = "C:\\Users\\marti\\source\\repos\\Todo_List\\Todo_List\\"
 
-def loadTodos(path):
+"""Load the content of the Json file specified
+
+:param path: path of the json file to load
+
+:return: the content of the json file
+"""
+def loadTodos(path: str) -> list:
 	with open(path) as jsonFile:
 		return json.load(jsonFile)
 
-def countTodo(data):
+"""Count the total number of Todo
+
+:param data: list of the Todo
+
+:return: number of Todos in the data
+"""
+def countTodo(data: list) -> int:
     count = len(data)
     return count
 
-def saveTodos(todos, path):
+"""Save the data fo the Todos in the Json file
+
+:param todos: data of the Todo to save
+:param path: path of the Json file
+"""
+def saveTodos(todos: list, path: str):
     with open(path, 'w') as jsonFile:
         json.dump(todos, jsonFile, indent=2)
     print("Todo enregistré")
 
-def listCategoriesTodo(data):
+"""List all the existing categories of the Todos
+In the list, each category is unique
+
+:param data: the list of the Todo
+
+:return: a list of the categories
+"""
+def listCategoriesTodo(data: list) -> list:
     categories = []
     for todo in data:
         if not todo["categorie"] in categories:
             categories.append(todo["categorie"])
     return categories
 
-def displayTodo(args, data):
+"""Display the selected Todo
+
+:param args: arguments passed after the "todo" command
+:param data: list of the Todos
+"""
+def displayTodo(args: list, data: list):
     if len(args) <= 2:
         print("Todo enregistré(s) :\n")
         for cat in listCategoriesTodo(data):
@@ -59,7 +91,15 @@ def displayTodo(args, data):
             else:
                 print("Cette catégorie n'existe pas.")
 
-def addTodo(args, data, index):
+"""Add a new Todo to the list
+
+:param args: arguments passed after the "todo" command
+:param data: list of the Todos
+:param index: the number of Todos before adding
+
+:return: the new list of the Todos after adding
+"""
+def addTodo(args: list, data: list, index: int) -> list:
     if len(args) >= 3:
         content = ""
         for i in range(2, len(args)):
@@ -78,13 +118,18 @@ def addTodo(args, data, index):
     data.append(newTodo)
     return data
 
-def categorieTodo(data, args):
+"""Manage the different actions of the "todo category" command
+
+:param args: arguments passed after the "todo" command
+:param data: list of the Todos
+"""
+def categorieTodo(data: list, args: list):
     if len(args) >= 3:
         if args[2].lower() == "help":
             categorieAide()
 
         elif args[2].lower() == "afficher"  or args[2].lower() == "aff":
-            categorieAfficher(listCategories)
+            categorieAfficher(listCategoriesTodo(data))
 
         elif args[2].lower() == "ajouter" or args[2].lower() == "aj":
             if len(args) < 5:
@@ -133,7 +178,14 @@ def categorieTodo(data, args):
     else:
         print("Essayer 'todo categorie help' pour plus d'information sur la commande")
 
-def deleteTodo(args, data):
+"""Delete one or all the Todos of the list
+
+:param args: arguments passed after the "todo" command
+:param data: list of the Todos
+
+:return: a blank list
+"""
+def deleteTodo(args: list, data: list) -> list:
     if len(args) >= 3:
         index = args[2]
     else:
@@ -162,7 +214,15 @@ def deleteTodo(args, data):
         print("Ce Todo n'existe pas !")
         return None
 
-def printTodo(args, data):
+"""Print a category or all the Todos of the list
+
+Use the win32api package:
+pip install pywin32
+
+:param args: arguments passed after the "todo" command
+:param data: list of the Todos
+"""
+def printTodo(args: list, data: list):
     ok = True
     if len(args) >= 3:
         categorie = args[2]
@@ -192,11 +252,16 @@ def printTodo(args, data):
             dir = pathPrint
             win32api.ShellExecute( 0,  "print",  filename, None, ".", 0)
 
+"""Redirect the process to the adequate part depending on the arguments
+
+Main function of the program
+"""
 def main():
     data = loadTodos(path)
     todoNumber = countTodo(data)
-
     args = sys.argv
+    
+    print("")
     if len(args) == 1:
 
         displayTodo(args, data)
@@ -261,11 +326,10 @@ Vous pouvez les gérer grâce aux différentes commandes suivantes :
         else:
 
             print("Commande inconnue\nEssayer 'todo help' pour plus d'infos")
+    print("")
 
 #================================================
 # Main
 #================================================
-print("")
 main()
-print("")
 #__END__
