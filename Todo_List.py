@@ -61,7 +61,7 @@ def listCategoriesTodo(data: list) -> list:
 """
 def displayTodo(args: list, data: list):
     if len(args) <= 2:
-        print("Todo enregistré(s) :\n")
+        print("Todo enregistré(s) :")
         for cat in listCategoriesTodo(data):
             print("\n  --- " + cat.capitalize() + " ---  ")
             for dat in data:
@@ -251,6 +251,17 @@ def printTodo(args: list, data: list):
 
             dir = pathPrint
             win32api.ShellExecute( 0,  "print",  filename, None, ".", 0)
+            os.remove(pathPrint + filename)
+
+"""Open the JSON file where data is stored
+
+:param file: name of the file where data is stored
+"""
+def openTodo(file: str):
+    print("Ouverture du fichier des Todo")
+    print("Fermez le fichier pour continuer")
+    os.system("data.json")
+
 
 """Redirect the process to the adequate part depending on the arguments
 
@@ -319,9 +330,13 @@ Vous pouvez les gérer grâce aux différentes commandes suivantes :
 
  help___________________: affiche ce message""")
 
-        elif args[1].lower() =="print":
+        elif args[1].lower() == "print":
 
             printTodo(args, data)
+
+        elif args[1].lower() == "open":
+
+            openTodo("data.json")
 
         else:
 
